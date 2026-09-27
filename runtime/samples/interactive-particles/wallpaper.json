@@ -1,0 +1,10 @@
+{
+  "title": "Drift field",
+  "type": "html",
+  "entry": "index.html",
+  "author": "WallpaperFlow",
+  "category": "Abstract",
+  "tags": ["interactive", "particles", "minimal"],
+  "interactive": true,
+  "properties": { "count": { "type": "slider", "value": 900, "min": 200, "max": 3000, "text": "Particles" } }
+}

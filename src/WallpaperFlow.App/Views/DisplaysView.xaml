@@ -1,0 +1,124 @@
+<UserControl x:Class="WallpaperFlow.App.Views.DisplaysView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:h="clr-namespace:WallpaperFlow.App.Helpers">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="32,4,32,32" MaxWidth="980" HorizontalAlignment="Left">
+            <DockPanel>
+                <Button DockPanel.Dock="Right" Content="Detect displays" Command="{Binding RefreshCommand}" VerticalAlignment="Center" />
+                <TextBlock Text="Displays" Style="{StaticResource PageTitle}" />
+            </DockPanel>
+            <TextBlock Style="{StaticResource Caption}" Margin="0,4,0,16" Text="Monitors are recognised by their hardware ID, so assignments survive unplugging and re-docking." />
+            <ContentControl Content="{Binding}" ContentTemplate="{StaticResource MessageBanner}" />
+
+            <TextBlock Text="Layout" Style="{StaticResource SectionTitle}" />
+            <Border Style="{StaticResource SegmentHost}" Margin="0,0,0,16">
+                <StackPanel Orientation="Horizontal">
+                    <RadioButton Style="{StaticResource Segment}" Content="Same on every display" IsChecked="{Binding Layout, Converter={StaticResource EnumBool}, ConverterParameter=SameOnAll}" />
+                    <RadioButton Style="{StaticResource Segment}" Content="Different per display" IsChecked="{Binding Layout, Converter={StaticResource EnumBool}, ConverterParameter=PerMonitor}" />
+                    <RadioButton Style="{StaticResource Segment}" Content="Span across displays" IsChecked="{Binding Layout, Converter={StaticResource EnumBool}, ConverterParameter=Span}" />
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource SettingRow}" Visibility="{Binding IsPerMonitor, Converter={StaticResource Collapsed}}">
+                <DockPanel>
+                    <ComboBox DockPanel.Dock="Right" ItemsSource="{Binding WallpaperChoices}" SelectedItem="{Binding SharedWallpaper}" MinWidth="280" />
+                    <TextBlock Text="Wallpaper" VerticalAlignment="Center" />
+                </DockPanel>
+            </Border>
+            <ItemsControl ItemsSource="{Binding Displays}" Visibility="{Binding IsPerMonitor, Converter={StaticResource Visible}}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Style="{StaticResource SettingRow}">
+                            <DockPanel>
+                                <ComboBox DockPanel.Dock="Right" ItemsSource="{Binding Choices}" SelectedItem="{Binding Wallpaper}" MinWidth="280" VerticalAlignment="Center" />
+                                <TextBlock DockPanel.Dock="Left" Text="&#xE7F4;" Style="{StaticResource Icon}" FontSize="20" Margin="0,0,14,0" />
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding Label}" FontWeight="SemiBold" />
+                                    <TextBlock Text="{Binding Details}" Style="{StaticResource Caption}" />
+                                </StackPanel>
+                            </DockPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Border Style="{StaticResource SettingRow}">
+                <DockPanel>
+                    <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding RememberDisconnected}" />
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="Remember disconnected displays" />
+                        <TextBlock Style="{StaticResource Caption}" Text="Restore each monitor's wallpaper when it's plugged back in." />
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+
+            <DockPanel Margin="0,24,0,10">
+                <Button DockPanel.Dock="Right" Content="Next now" Command="{Binding NextNowCommand}" />
+                <TextBlock Text="Rotation" Style="{StaticResource SectionTitle}" Margin="0" VerticalAlignment="Center" />
+            </DockPanel>
+            <Border Style="{StaticResource SettingRow}">
+                <DockPanel>
+                    <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding SchedulerEnabled}" />
+                    <TextBlock Text="Change wallpapers automatically" VerticalAlignment="Center" />
+                </DockPanel>
+            </Border>
+            <StackPanel IsEnabled="{Binding SchedulerEnabled}">
+                <Border Style="{StaticResource SettingRow}">
+                    <DockPanel>
+                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                            <TextBox Text="{Binding CustomMinutes}" Width="70" Margin="0,0,8,0" Visibility="{Binding IsCustom, Converter={StaticResource Visible}}" ToolTip="Minutes" />
+                            <ComboBox ItemsSource="{Binding Days}" SelectedItem="{Binding WeeklyOn}" MinWidth="120" Margin="0,0,8,0" Visibility="{Binding IsWeekly, Converter={StaticResource Visible}}" />
+                            <TextBox Text="{Binding DailyAt}" Width="70" Margin="0,0,8,0" Visibility="{Binding IsDailyOrWeekly, Converter={StaticResource Visible}}" ToolTip="Time (HH:mm)" />
+                            <ComboBox ItemsSource="{Binding Intervals}" SelectedItem="{Binding Interval}" MinWidth="130" />
+                        </StackPanel>
+                        <TextBlock Text="How often" VerticalAlignment="Center" />
+                    </DockPanel>
+                </Border>
+                <Border Style="{StaticResource SettingRow}">
+                    <DockPanel>
+                        <ComboBox DockPanel.Dock="Right" ItemsSource="{Binding ScheduleSources}" SelectedItem="{Binding ScheduleSource}" MinWidth="240" />
+                        <TextBlock Text="Pick from" VerticalAlignment="Center" />
+                    </DockPanel>
+                </Border>
+                <Border Style="{StaticResource SettingRow}">
+                    <DockPanel>
+                        <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding RandomOrder}" />
+                        <TextBlock Text="Shuffle order" VerticalAlignment="Center" />
+                    </DockPanel>
+                </Border>
+                <Border Style="{StaticResource SettingRow}" Visibility="{Binding IsPerMonitor, Converter={StaticResource Visible}}">
+                    <DockPanel>
+                        <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding ApplyPerMonitor}" />
+                        <TextBlock Text="Pick a different wallpaper for each display" VerticalAlignment="Center" />
+                    </DockPanel>
+                </Border>
+            </StackPanel>
+
+            <DockPanel Margin="0,24,0,10">
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                    <Button Content="Add time" Command="{Binding AddTimeRuleCommand}" />
+                    <Button Content="Save" Margin="8,0,0,0" Command="{Binding SaveRulesCommand}" />
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="Time of day" Style="{StaticResource SectionTitle}" Margin="0" />
+                    <TextBlock Style="{StaticResource Caption}" Text="Switch to a specific wallpaper at a set time, for example a night scene at 20:00." />
+                </StackPanel>
+            </DockPanel>
+            <ItemsControl ItemsSource="{Binding TimeRules}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Style="{StaticResource SettingRow}">
+                            <DockPanel>
+                                <Button DockPanel.Dock="Right" Style="{StaticResource IconButton}" Content="&#xE74D;" ToolTip="Remove"
+                                        Command="{Binding DataContext.RemoveTimeRuleCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" />
+                                <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding Enabled}" Margin="12,0" />
+                                <TextBox DockPanel.Dock="Left" Text="{Binding At}" Width="70" />
+                                <ComboBox ItemsSource="{Binding Choices}" SelectedItem="{Binding Wallpaper}" Margin="12,0,0,0" />
+                            </DockPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

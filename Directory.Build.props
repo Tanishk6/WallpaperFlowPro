@@ -1,0 +1,25 @@
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>12</LangVersion>
+    <Platforms>x64</Platforms>
+    <PlatformTarget>x64</PlatformTarget>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+    <Version>1.0.0</Version>
+    <Product>WallpaperFlow Pro</Product>
+    <Company>Tnsk.exe</Company>
+    <Copyright>Copyright © 2026 Tnsk.exe</Copyright>
+
+    <!-- Low-footprint runtime profile: workstation, non-concurrent GC keeps the
+         resident heap small; we do almost no allocation in steady state. -->
+    <ServerGarbageCollection>false</ServerGarbageCollection>
+    <ConcurrentGarbageCollection>false</ConcurrentGarbageCollection>
+    <TieredPGO>true</TieredPGO>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CA1416;NU1701</NoWarn>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,316 @@
+<UserControl x:Class="WallpaperFlow.App.Views.PerformanceView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:h="clr-namespace:WallpaperFlow.App.Helpers">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="32,4,32,32" MaxWidth="1040" HorizontalAlignment="Left">
+            <DockPanel>
+                <Button DockPanel.Dock="Right" Content="Trim memory" Command="{Binding TrimCommand}" VerticalAlignment="Center" />
+                <TextBlock Text="Performance" Style="{StaticResource PageTitle}" />
+            </DockPanel>
+            <TextBlock Style="{StaticResource Caption}" Margin="0,4,0,16" Text="Numbers are for WallpaperFlow and its renderers only. Live values refresh every second while this page is open." />
+            <ContentControl Content="{Binding}" ContentTemplate="{StaticResource MessageBanner}" />
+            <Border Style="{StaticResource Pill}" HorizontalAlignment="Left" Margin="0,0,0,14" Background="{DynamicResource HighlightSoftBrush}" BorderThickness="0">
+                <StackPanel Orientation="Horizontal">
+                    <Ellipse Width="7" Height="7" Fill="{DynamicResource HighlightBrush}" VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding PolicyText}" Margin="8,0,0,0" />
+                </StackPanel>
+            </Border>
+            <UniformGrid Columns="3">
+                <Border Style="{StaticResource Card}" Margin="0,0,12,12" Padding="16,14">
+                    <StackPanel>
+                        <TextBlock Text="CPU" Style="{StaticResource Caption}" />
+                        <TextBlock Text="{Binding CpuText}" FontFamily="{StaticResource DisplayFont}" FontSize="26" FontWeight="SemiBold" Margin="0,2,0,0" />
+                        <h:Sparkline Height="36" Margin="0,8,0,0" Values="{Binding CpuHistory}" Maximum="10" Stroke="{DynamicResource AccentBrush}" Fill="{DynamicResource AccentSoftBrush}" />
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource Card}" Margin="0,0,12,12" Padding="16,14">
+                    <StackPanel>
+                        <TextBlock Text="GPU" Style="{StaticResource Caption}" />
+                        <TextBlock Text="{Binding GpuText}" FontFamily="{StaticResource DisplayFont}" FontSize="26" FontWeight="SemiBold" Margin="0,2,0,0" />
+                        <h:Sparkline Height="36" Margin="0,8,0,0" Values="{Binding GpuHistory}" Maximum="10" Stroke="{DynamicResource AccentBrush}" Fill="{DynamicResource AccentSoftBrush}" />
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource Card}" Margin="0,0,12,12" Padding="16,14">
+                    <StackPanel>
+                        <TextBlock Text="Memory" Style="{StaticResource Caption}" />
+                        <TextBlock Text="{Binding RamText}" FontFamily="{StaticResource DisplayFont}" FontSize="26" FontWeight="SemiBold" Margin="0,2,0,0" />
+                        <h:Sparkline Height="36" Margin="0,8,0,0" Values="{Binding RamHistory}" Maximum="200" Stroke="{DynamicResource AccentBrush}" Fill="{DynamicResource AccentSoftBrush}" />
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource Card}" Margin="0,0,12,12" Padding="16,14">
+                    <StackPanel>
+                        <TextBlock Text="Video memory" Style="{StaticResource Caption}" />
+                        <TextBlock Text="{Binding VramText}" FontFamily="{StaticResource DisplayFont}" FontSize="26" FontWeight="SemiBold" Margin="0,2,0,0" />
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource Card}" Margin="0,0,12,12" Padding="16,14">
+                    <StackPanel>
+                        <TextBlock Text="Frames per second" Style="{StaticResource Caption}" />
+                        <TextBlock Text="{Binding FpsText}" FontFamily="{StaticResource DisplayFont}" FontSize="26" FontWeight="SemiBold" Margin="0,2,0,0" />
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource Card}" Margin="0,0,12,12" Padding="16,14">
+                    <StackPanel>
+                        <TextBlock Text="Temperature" Style="{StaticResource Caption}" />
+                        <TextBlock Text="{Binding TempText}" FontFamily="{StaticResource DisplayFont}" FontSize="26" FontWeight="SemiBold" Margin="0,2,0,0" />
+                    </StackPanel>
+                </Border>
+            </UniformGrid>
+            <TextBlock Text="{Binding SystemText}" Style="{StaticResource Caption}" Margin="0,0,0,8" />
+            <ItemsControl ItemsSource="{Binding Slots}" Margin="0,0,0,16">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <DockPanel Margin="0,0,0,4">
+                            <TextBlock DockPanel.Dock="Right" Text="{Binding Reason}" Style="{StaticResource Caption}" />
+                            <TextBlock Text="{Binding MonitorLabel}" Width="180" Style="{StaticResource Caption}" />
+                            <TextBlock Text="{Binding Title}" TextTrimming="CharacterEllipsis" />
+                        </DockPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <TextBlock Text="Rendering" Style="{StaticResource SectionTitle}" Margin="0,8,0,10" />
+                <Border Style="{StaticResource SettingRow}">
+                    <DockPanel>
+                        <ContentControl DockPanel.Dock="Right" VerticalAlignment="Center" Focusable="False"><ComboBox ItemsSource="{Binding FpsChoices}" SelectedItem="{Binding FpsLimit}" /></ContentControl>
+                        <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                            <TextBlock Text="Frame rate limit" />
+                            <TextBlock Style="{StaticResource Caption}" Text="For web, shader and clock wallpapers. Videos always play at their own frame rate." />
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+                <Border Style="{StaticResource SettingRow}">
+                    <DockPanel>
+                        <ContentControl DockPanel.Dock="Right" VerticalAlignment="Center" Focusable="False"><ComboBox ItemsSource="{Binding Qualities}" SelectedItem="{Binding Quality}" /></ContentControl>
+                        <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                            <TextBlock Text="Quality" />
+                            <TextBlock Style="{StaticResource Caption}" Text="Auto picks Balanced and drops to Performance when needed." />
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+                <Border Style="{StaticResource SettingRow}">
+                    <DockPanel>
+                        <ContentControl DockPanel.Dock="Right" VerticalAlignment="Center" Focusable="False"><CheckBox Style="{StaticResource Switch}" IsChecked="{Binding DynamicFps}" /></ContentControl>
+                        <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                            <TextBlock Text="Lower FPS while I work in other apps" />
+                            <TextBlock Style="{StaticResource Caption}" Text="Web and shader wallpapers only; videos are unaffected." />
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+                <Border Style="{StaticResource SettingRow}">
+                    <DockPanel>
+                        <ContentControl DockPanel.Dock="Right" VerticalAlignment="Center" Focusable="False"><TextBox Text="{Binding BackgroundFps}" Width="70" /></ContentControl>
+                        <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                            <TextBlock Text="Background frame rate" />
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+                <Border Style="{StaticResource SettingRow}">
+                    <DockPanel>
+                        <ContentControl DockPanel.Dock="Right" VerticalAlignment="Center" Focusable="False"><CheckBox Style="{StaticResource Switch}" IsChecked="{Binding AdaptiveRendering}" /></ContentControl>
+                        <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                            <TextBlock Text="Adaptive rendering" />
+                            <TextBlock Style="{StaticResource Caption}" Text="Scale down quality, effects and resolution when the GPU is busy with something else." />
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+                <Border Style="{StaticResource SettingRow}">
+                    <DockPanel>
+                        <ContentControl DockPanel.Dock="Right" VerticalAlignment="Center" Focusable="False"><CheckBox Style="{StaticResource Switch}" IsChecked="{Binding SmartResolution}" /></ContentControl>
+                        <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                            <TextBlock Text="Smart resolution" />
+                            <TextBlock Style="{StaticResource Caption}" Text="Allow rendering below native resolution under load." />
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+                <Border Style="{StaticResource SettingRow}">
+                    <DockPanel>
+                        <ContentControl DockPanel.Dock="Right" VerticalAlignment="Center" Focusable="False"><Slider Minimum="0.25" Maximum="1" Value="{Binding RenderScale}" Width="200" /></ContentControl>
+                        <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                            <TextBlock Text="Render scale" />
+                            <TextBlock Style="{StaticResource Caption}" Text="Web and shader wallpapers render at this fraction of native resolution." />
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+                <Border Style="{StaticResource SettingRow}">
+                    <DockPanel>
+                        <ContentControl DockPanel.Dock="Right" VerticalAlignment="Center" Focusable="False"><ComboBox ItemsSource="{Binding Decoders}" SelectedItem="{Binding HardwareDecoding}" /></ContentControl>
+                        <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                            <TextBlock Text="Hardware video decoding" />
+                            <TextBlock Style="{StaticResource Caption}" Text="Auto uses D3D11 decoding on any modern GPU." />
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+                <Border Style="{StaticResource SettingRow}">
+                    <DockPanel>
+                        <ContentControl DockPanel.Dock="Right" VerticalAlignment="Center" Focusable="False"><ComboBox ItemsSource="{Binding GpuPreferences}" SelectedItem="{Binding GpuPreference}" MinWidth="260" /></ContentControl>
+                        <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                            <TextBlock Text="Graphics processor" />
+                            <TextBlock Style="{StaticResource Caption}" Text="Windows GPU preference for the video renderer. Power saving keeps laptops cool." />
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+                <Border Style="{StaticResource SettingRow}">
+                    <DockPanel>
+                        <ContentControl DockPanel.Dock="Right" VerticalAlignment="Center" Focusable="False"><ComboBox ItemsSource="{Binding Adapters}" SelectedItem="{Binding Adapter}" MinWidth="260" /></ContentControl>
+                        <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                            <TextBlock Text="Adapter" />
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+                <Border Style="{StaticResource SettingRow}">
+                    <DockPanel>
+                        <ContentControl DockPanel.Dock="Right" VerticalAlignment="Center" Focusable="False"><CheckBox Style="{StaticResource Switch}" IsChecked="{Binding SmartVideoCache}" /></ContentControl>
+                        <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                            <TextBlock Text="Optimise large videos" />
+                            <TextBlock Style="{StaticResource Caption}" Text="Off by default. Re-encodes videos much larger than your screen (like 4K on a 1080p monitor) to screen size, keeping the frame rate. Saves some GPU at a small quality cost." />
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+                <Border Style="{StaticResource SettingRow}">
+                    <DockPanel>
+                        <ContentControl DockPanel.Dock="Right" VerticalAlignment="Center" Focusable="False"><StackPanel Orientation="Horizontal"><TextBlock Text="{Binding CacheSize}" Style="{StaticResource Caption}" VerticalAlignment="Center" Margin="0,0,12,0" /><TextBox Text="{Binding VideoCacheLimitGb}" Width="60" /><Button Content="Clear" Margin="8,0,0,0" Command="{Binding ClearCacheCommand}" /></StackPanel></ContentControl>
+                        <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                            <TextBlock Text="Optimised cache size (GB)" />
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+            <TextBlock Text="Games, fullscreen and streaming" Style="{StaticResource SectionTitle}" Margin="0,24,0,10" />
+                <Border Style="{StaticResource SettingRow}">
+                    <DockPanel>
+                        <ContentControl DockPanel.Dock="Right" VerticalAlignment="Center" Focusable="False"><CheckBox Style="{StaticResource Switch}" IsChecked="{Binding DetectionEnabled}" /></ContentControl>
+                        <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                            <TextBlock Text="Smart detection" />
+                            <TextBlock Style="{StaticResource Caption}" Text="React to games, fullscreen video, presentations and recording software." />
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+                <Border Style="{StaticResource SettingRow}">
+                    <DockPanel>
+                        <ContentControl DockPanel.Dock="Right" VerticalAlignment="Center" Focusable="False"><ComboBox ItemsSource="{Binding Actions}" SelectedItem="{Binding GamingAction}" /></ContentControl>
+                        <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                            <TextBlock Text="When a game is running" />
+                            <TextBlock Style="{StaticResource Caption}" Text="The GPU is shared, so this applies to every display." />
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+                <Border Style="{StaticResource SettingRow}">
+                    <DockPanel>
+                        <ContentControl DockPanel.Dock="Right" VerticalAlignment="Center" Focusable="False"><TextBox Text="{Binding EscalateMinutes}" Width="70" /></ContentControl>
+                        <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                            <TextBlock Text="Stop completely after (minutes)" />
+                            <TextBlock Style="{StaticResource Caption}" Text="A paused wallpaper still holds video memory. 0 keeps it paused." />
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+                <Border Style="{StaticResource SettingRow}">
+                    <DockPanel>
+                        <ContentControl DockPanel.Dock="Right" VerticalAlignment="Center" Focusable="False"><ComboBox ItemsSource="{Binding Actions}" SelectedItem="{Binding FullscreenVideoAction}" /></ContentControl>
+                        <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                            <TextBlock Text="Fullscreen video" />
+                            <TextBlock Style="{StaticResource Caption}" Text="Only the display showing the video is affected." />
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+                <Border Style="{StaticResource SettingRow}">
+                    <DockPanel>
+                        <ContentControl DockPanel.Dock="Right" VerticalAlignment="Center" Focusable="False"><ComboBox ItemsSource="{Binding Actions}" SelectedItem="{Binding PresentationAction}" /></ContentControl>
+                        <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                            <TextBlock Text="Presentations" />
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+                <Border Style="{StaticResource SettingRow}">
+                    <DockPanel>
+                        <ContentControl DockPanel.Dock="Right" VerticalAlignment="Center" Focusable="False"><CheckBox Style="{StaticResource Switch}" IsChecked="{Binding PauseWhenCovered}" /></ContentControl>
+                        <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                            <TextBlock Text="Pause displays covered by windows" />
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+                <Border Style="{StaticResource SettingRow}">
+                    <DockPanel>
+                        <ContentControl DockPanel.Dock="Right" VerticalAlignment="Center" Focusable="False"><CheckBox Style="{StaticResource Switch}" IsChecked="{Binding PauseOnLock}" /></ContentControl>
+                        <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                            <TextBlock Text="Pause while the PC is locked" />
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+            <DockPanel Margin="0,12,0,8">
+                <Button DockPanel.Dock="Right" Content="Add app" Command="{Binding AddRuleCommand}" />
+                <TextBlock Text="App rules" FontWeight="SemiBold" VerticalAlignment="Center" />
+            </DockPanel>
+            <ItemsControl ItemsSource="{Binding Rules}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Style="{StaticResource SettingRow}" MinHeight="0">
+                            <DockPanel>
+                                <Button DockPanel.Dock="Right" Style="{StaticResource IconButton}" Content="&#xE74D;" ToolTip="Remove"
+                                        Command="{Binding DataContext.RemoveRuleCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" />
+                                <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding Enabled}" Margin="12,0" />
+                                <ComboBox DockPanel.Dock="Right" ItemsSource="{Binding DataContext.Actions, RelativeSource={RelativeSource AncestorType=UserControl}}" SelectedItem="{Binding Action}" MinWidth="120" />
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding DisplayName}" />
+                                    <TextBlock Text="{Binding ProcessName}" Style="{StaticResource Caption}" />
+                                </StackPanel>
+                            </DockPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <TextBlock Text="Battery" Style="{StaticResource SectionTitle}" Margin="0,24,0,10" />
+                <Border Style="{StaticResource SettingRow}">
+                    <DockPanel>
+                        <ContentControl DockPanel.Dock="Right" VerticalAlignment="Center" Focusable="False"><CheckBox Style="{StaticResource Switch}" IsChecked="{Binding BatteryEnabled}" /></ContentControl>
+                        <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                            <TextBlock Text="Battery saver" />
+                            <TextBlock Style="{StaticResource Caption}" Text="Applies only while running on battery." />
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+                <Border Style="{StaticResource SettingRow}">
+                    <DockPanel>
+                        <ContentControl DockPanel.Dock="Right" VerticalAlignment="Center" Focusable="False"><CheckBox Style="{StaticResource Switch}" IsChecked="{Binding PauseWhenUnplugged}" /></ContentControl>
+                        <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                            <TextBlock Text="Pause whenever unplugged" />
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+                <Border Style="{StaticResource SettingRow}">
+                    <DockPanel>
+                        <ContentControl DockPanel.Dock="Right" VerticalAlignment="Center" Focusable="False"><TextBox Text="{Binding BatteryFps}" Width="70" /></ContentControl>
+                        <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                            <TextBlock Text="Frame rate on battery" />
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+                <Border Style="{StaticResource SettingRow}">
+                    <DockPanel>
+                        <ContentControl DockPanel.Dock="Right" VerticalAlignment="Center" Focusable="False"><TextBox Text="{Binding PauseBelowPercent}" Width="70" /></ContentControl>
+                        <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                            <TextBlock Text="Pause below (%)" />
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+                <Border Style="{StaticResource SettingRow}">
+                    <DockPanel>
+                        <ContentControl DockPanel.Dock="Right" VerticalAlignment="Center" Focusable="False"><CheckBox Style="{StaticResource Switch}" IsChecked="{Binding DisableHeavyEffects}" /></ContentControl>
+                        <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                            <TextBlock Text="Turn off heavy effects" />
+                            <TextBlock Style="{StaticResource Caption}" Text="Bloom, blur and motion blur." />
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+                <Border Style="{StaticResource SettingRow}">
+                    <DockPanel>
+                        <ContentControl DockPanel.Dock="Right" VerticalAlignment="Center" Focusable="False"><CheckBox Style="{StaticResource Switch}" IsChecked="{Binding PauseOnEnergySaver}" /></ContentControl>
+                        <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                            <TextBlock Text="Pause when Windows energy saver is on" />
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

@@ -1,0 +1,131 @@
+<UserControl x:Class="WallpaperFlow.App.Views.UploadView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:h="clr-namespace:WallpaperFlow.App.Helpers">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="32,4,32,32">
+            <TextBlock Text="Upload" Style="{StaticResource PageTitle}" />
+            <TextBlock Style="{StaticResource Caption}" Margin="0,4,0,16" Text="Everything is checked by content before it's added. Packages can't bring executables along." />
+            <ContentControl Content="{Binding}" ContentTemplate="{StaticResource MessageBanner}" />
+
+            <!-- Drop zone -->
+            <Border x:Name="DropZone" AllowDrop="True" Drop="OnDrop" DragEnter="OnDragEnter" DragLeave="OnDragLeave" CornerRadius="14" BorderThickness="1.5"
+                    BorderBrush="{DynamicResource StrokeStrongBrush}" Background="{DynamicResource SurfaceBrush}" Padding="32" MinHeight="190">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock Text="&#xE898;" Style="{StaticResource Icon}" FontSize="34" HorizontalAlignment="Center" Foreground="{DynamicResource AccentBrush}" />
+                    <TextBlock Text="Drop videos, GIFs, packages or folders here" FontSize="17" FontWeight="SemiBold" Margin="0,14,0,4" HorizontalAlignment="Center" />
+                    <TextBlock Style="{StaticResource Caption}" HorizontalAlignment="Center" TextAlignment="Center"
+                               Text="MP4 · MKV · WEBM · MOV · AVI · WMV · M4V · GIF · APNG · zip packages. A folder of photos becomes a slideshow." />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,16,0,0">
+                        <Button Style="{StaticResource AccentButton}" Content="Choose files" Command="{Binding PickFilesCommand}" />
+                        <Button Content="Choose a folder" Margin="8,0,0,0" Command="{Binding PickFolderCommand}" />
+                    </StackPanel>
+                    <StackPanel Margin="0,16,0,0" Visibility="{Binding IsBusy, Converter={StaticResource Visible}}" Width="360">
+                        <TextBlock Text="{Binding ProgressText}" Style="{StaticResource Caption}" Margin="0,0,0,6" />
+                        <ProgressBar Value="{Binding Progress, Mode=OneWay}" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <UniformGrid Columns="2" Margin="0,16,0,0">
+                <!-- Website -->
+                <Border Style="{StaticResource Card}" Margin="0,0,8,16">
+                    <StackPanel>
+                        <TextBlock Text="Website as wallpaper" Style="{StaticResource SectionTitle}" />
+                        <TextBlock Style="{StaticResource Caption}" Margin="0,-6,0,10" Text="Runs sandboxed. It stays offline-limited to that site; pop-ups, downloads and permissions are blocked." />
+                        <TextBox Text="{Binding Url, UpdateSourceTrigger=PropertyChanged}" ToolTip="https://…" />
+                        <DockPanel Margin="0,8,0,0">
+                            <Button DockPanel.Dock="Right" Content="Add" Margin="8,0,0,0" Command="{Binding AddUrlCommand}" />
+                            <TextBox Text="{Binding UrlTitle}" ToolTip="Title (optional)" />
+                        </DockPanel>
+                    </StackPanel>
+                </Border>
+                <!-- Clock -->
+                <Border Style="{StaticResource Card}" Margin="8,0,0,16">
+                    <StackPanel>
+                        <TextBlock Text="Live clock" Style="{StaticResource SectionTitle}" />
+                        <TextBlock Style="{StaticResource Caption}" Margin="0,-6,0,10" Text="Updates once a second, so it costs next to nothing. Colours and format are adjustable afterwards." />
+                        <ComboBox ItemsSource="{Binding ClockStyles}" SelectedItem="{Binding ClockStyle}" HorizontalAlignment="Left" />
+                        <Button Content="Create clock" HorizontalAlignment="Left" Margin="0,10,0,0" Command="{Binding CreateClockCommand}" />
+                    </StackPanel>
+                </Border>
+            </UniformGrid>
+
+            <!-- Shader -->
+            <Border Style="{StaticResource Card}" Margin="0,0,0,16">
+                <StackPanel>
+                    <DockPanel>
+                        <Button DockPanel.Dock="Right" Style="{StaticResource GhostButton}" Content="Load the Aurora example" Command="{Binding LoadAuroraCommand}" />
+                        <TextBlock Text="Shader" Style="{StaticResource SectionTitle}" />
+                    </DockPanel>
+                    <TextBlock Style="{StaticResource Caption}" Margin="0,-4,0,10" Text="Paste Shadertoy-style GLSL with mainImage(). iTime, iResolution, iMouse and iFrame work; iChannel0 carries the audio spectrum." />
+                    <TextBox Style="{StaticResource CodeBox}" Text="{Binding ShaderCode, UpdateSourceTrigger=PropertyChanged}" Height="220" />
+                    <DockPanel Margin="0,10,0,0">
+                        <Button DockPanel.Dock="Right" Style="{StaticResource AccentButton}" Content="Create shader wallpaper" Command="{Binding CreateShaderCommand}" />
+                        <CheckBox DockPanel.Dock="Right" Content="Audio reactive" IsChecked="{Binding ShaderAudio}" Margin="0,0,16,0" VerticalAlignment="Center" />
+                        <TextBox Text="{Binding ShaderTitle}" MaxWidth="280" HorizontalAlignment="Left" MinWidth="200" />
+                    </DockPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Wallpaper Engine -->
+            <Border Style="{StaticResource Card}" Margin="0,0,0,16">
+                <StackPanel>
+                    <DockPanel>
+                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                            <Button Content="Find projects" Command="{Binding ScanWeCommand}" />
+                            <Button Style="{StaticResource AccentButton}" Content="Import selected" Margin="8,0,0,0" Command="{Binding ImportWeCommand}"
+                                    Visibility="{Binding WeScanned, Converter={StaticResource Visible}}" />
+                        </StackPanel>
+                        <StackPanel>
+                            <TextBlock Text="Import from Wallpaper Engine" Style="{StaticResource SectionTitle}" />
+                            <TextBlock Style="{StaticResource Caption}" Margin="0,-6,0,0" Text="Video and web projects move over with their tags and settings. Scene and application projects can't run outside Wallpaper Engine." />
+                        </StackPanel>
+                    </DockPanel>
+                    <ItemsControl ItemsSource="{Binding WeProjects}" Margin="0,12,0,0" MaxHeight="360">
+                        <ItemsControl.Template>
+                            <ControlTemplate TargetType="ItemsControl"><ScrollViewer VerticalScrollBarVisibility="Auto"><ItemsPresenter /></ScrollViewer></ControlTemplate>
+                        </ItemsControl.Template>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <DockPanel Margin="0,0,0,8">
+                                    <CheckBox DockPanel.Dock="Left" IsChecked="{Binding IsSelected}" IsEnabled="{Binding Supported}" VerticalAlignment="Center" />
+                                    <Border DockPanel.Dock="Left" Width="64" Height="36" CornerRadius="6" Margin="10,0,12,0" Background="{DynamicResource ThumbFallbackBrush}">
+                                        <Image Source="{Binding Preview, Converter={StaticResource Image}}" Stretch="UniformToFill" h:RoundedClip.Radius="6" />
+                                    </Border>
+                                    <TextBlock DockPanel.Dock="Right" Text="{Binding Kind}" Style="{StaticResource Caption}" VerticalAlignment="Center" />
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding Title}" TextTrimming="CharacterEllipsis" />
+                                        <TextBlock Text="{Binding Reason}" Style="{StaticResource Caption}" Visibility="{Binding Reason, Converter={StaticResource Visible}}" />
+                                    </StackPanel>
+                                </DockPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource Card}" Margin="0,0,0,16">
+                <DockPanel>
+                    <Button DockPanel.Dock="Right" Content="Add samples" Command="{Binding AddSamplesCommand}" VerticalAlignment="Center" />
+                    <StackPanel>
+                        <TextBlock Text="Sample wallpapers" Style="{StaticResource SectionTitle}" />
+                        <TextBlock Style="{StaticResource Caption}" Margin="0,-6,0,0" Text="An audio visualiser and an interactive particle field — also handy starting points for your own web wallpapers." />
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+
+            <StackPanel Visibility="{Binding HasResults, Converter={StaticResource Visible}}">
+                <DockPanel Margin="0,8,0,8">
+                    <Button DockPanel.Dock="Right" Style="{StaticResource GhostButton}" Content="Open library" Command="{Binding OpenLibraryCommand}" />
+                    <TextBlock Text="This session" Style="{StaticResource SectionTitle}" Margin="0" VerticalAlignment="Center" />
+                </DockPanel>
+                <ItemsControl ItemsSource="{Binding Results}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate><TextBlock Text="{Binding}" Style="{StaticResource Caption}" FontSize="13" Margin="0,0,0,4" /></DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

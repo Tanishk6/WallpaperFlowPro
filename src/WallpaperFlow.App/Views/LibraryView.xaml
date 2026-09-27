@@ -1,0 +1,215 @@
+<UserControl x:Class="WallpaperFlow.App.Views.LibraryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:h="clr-namespace:WallpaperFlow.App.Helpers"
+             AllowDrop="True" Drop="OnDrop">
+    <UserControl.Resources>
+        <DataTemplate x:Key="SourceTemplate">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Right" Text="{Binding Count}" Style="{StaticResource Caption}" VerticalAlignment="Center" />
+                <TextBlock Text="{Binding Glyph}" Style="{StaticResource Icon}" FontSize="13" Width="20" />
+                <TextBlock Text="{Binding Name}" Margin="8,0,6,0" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+            </DockPanel>
+        </DataTemplate>
+        <Style x:Key="SourceList" TargetType="ListBox">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+            <Setter Property="ItemTemplate" Value="{StaticResource SourceTemplate}" />
+            <Setter Property="ItemContainerStyle" Value="{StaticResource NavItem}" />
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled" />
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="210" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Sources -->
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="12,0,0,0">
+            <StackPanel>
+                <ListBox Style="{StaticResource SourceList}" ItemsSource="{Binding BuiltInSources}" SelectedItem="{Binding Source}" />
+                <DockPanel Margin="0,8,8,0">
+                    <Button DockPanel.Dock="Right" Style="{StaticResource IconButton}" Content="&#xE710;" Width="26" Height="26" FontSize="11" Command="{Binding NewCollectionCommand}" ToolTip="New collection" />
+                    <TextBlock Text="COLLECTIONS" Style="{StaticResource Eyebrow}" Margin="12,0,0,0" VerticalAlignment="Center" />
+                </DockPanel>
+                <ListBox Style="{StaticResource SourceList}" ItemsSource="{Binding Collections}" SelectedItem="{Binding Source}">
+                    <ListBox.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Delete collection" Command="{Binding RemoveSourceCommand}" CommandParameter="{Binding Source}" />
+                        </ContextMenu>
+                    </ListBox.ContextMenu>
+                </ListBox>
+                <DockPanel Margin="0,8,8,0">
+                    <Button DockPanel.Dock="Right" Style="{StaticResource IconButton}" Content="&#xE710;" Width="26" Height="26" FontSize="11" Command="{Binding NewFolderCommand}" ToolTip="New folder" />
+                    <TextBlock Text="FOLDERS" Style="{StaticResource Eyebrow}" Margin="12,0,0,0" VerticalAlignment="Center" />
+                </DockPanel>
+                <ListBox Style="{StaticResource SourceList}" ItemsSource="{Binding Folders}" SelectedItem="{Binding Source}">
+                    <ListBox.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Delete folder" Command="{Binding RemoveSourceCommand}" CommandParameter="{Binding Source}" />
+                        </ContextMenu>
+                    </ListBox.ContextMenu>
+                </ListBox>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Grid -->
+        <Grid Grid.Column="1" Margin="20,0,12,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <DockPanel Margin="0,0,0,16">
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                    <ComboBox ItemsSource="{Binding TypeFilters}" SelectedItem="{Binding TypeFilter}" MinWidth="130" />
+                    <ComboBox ItemsSource="{Binding SortOptions}" SelectedItem="{Binding Sort}" MinWidth="130" Margin="8,0,0,0" />
+                    <Button x:Name="SortDir" Style="{StaticResource IconButton}" Content="&#xE74B;" Command="{Binding ToggleSortDirectionCommand}" ToolTip="Sort direction" Margin="4,0,0,0" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
+                    <TextBlock Text="{Binding Source.Name, TargetNullValue=Library}" Style="{StaticResource PageTitle}" />
+                    <TextBlock Text="{Binding ResultCount}" Style="{StaticResource Caption}" FontSize="14" Margin="12,0,0,5" VerticalAlignment="Bottom" />
+                </StackPanel>
+            </DockPanel>
+            <ContentControl Grid.Row="1" Content="{Binding}" ContentTemplate="{StaticResource MessageBanner}" />
+            <ProgressBar Grid.Row="1" IsIndeterminate="True" VerticalAlignment="Top" Margin="0,-10,0,0" Visibility="{Binding IsBusy, Converter={StaticResource Visible}}" />
+
+            <ListBox x:Name="RowList" Grid.Row="2" ItemsSource="{Binding Rows}" Background="Transparent" BorderThickness="0"
+                     ItemContainerStyle="{StaticResource PlainItem}" SizeChanged="OnGridSizeChanged"
+                     VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" VirtualizingPanel.ScrollUnit="Pixel"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <ItemsControl ItemsSource="{Binding}" ItemTemplate="{StaticResource WallpaperCard}">
+                            <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel Orientation="Horizontal" /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                        </ItemsControl>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <StackPanel Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="360" Visibility="{Binding IsEmpty, Converter={StaticResource Visible}}">
+                <TextBlock Text="&#xE8F1;" Style="{StaticResource Icon}" FontSize="36" HorizontalAlignment="Center" Foreground="{DynamicResource TextFaintBrush}" />
+                <TextBlock Text="{Binding EmptyText}" Style="{StaticResource Caption}" FontSize="13" TextAlignment="Center" Margin="0,12,0,0" />
+            </StackPanel>
+        </Grid>
+
+        <!-- Detail panel -->
+        <Border Grid.Column="2" Width="352" Margin="0,0,16,16" Style="{StaticResource Card}" Padding="0"
+                Visibility="{Binding DataContext.Detail, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource Visible}}" DataContext="{Binding Detail}">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="18">
+                    <Border CornerRadius="10" Height="176" Background="{DynamicResource ThumbFallbackBrush}">
+                        <Grid h:RoundedClip.Radius="10">
+                            <Image Source="{Binding Thumbnail, Converter={StaticResource ImageLarge}}" Stretch="UniformToFill" />
+                            <Grid h:HoverPreview.Clip="{Binding PreviewClip}" Background="Transparent" />
+                        </Grid>
+                    </Border>
+                    <TextBox Text="{Binding EditTitle, UpdateSourceTrigger=LostFocus}" FontSize="16" FontWeight="SemiBold" Margin="0,14,0,0" />
+                    <Grid Margin="0,10,0,0">
+                        <Grid.ColumnDefinitions><ColumnDefinition /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                        <ComboBox x:Name="Target" ItemsSource="{Binding MonitorChoices}" SelectedIndex="0" MinWidth="0" />
+                        <Button Grid.Column="1" Style="{StaticResource AccentButton}" Content="Apply" Margin="8,0,0,0"
+                                Command="{Binding ApplyCommand}" CommandParameter="{Binding SelectedItem, ElementName=Target}" />
+                    </Grid>
+
+                    <TextBlock Text="DETAILS" Style="{StaticResource Eyebrow}" Margin="0,20,0,6" />
+                    <TextBlock Text="Tags (comma separated)" Style="{StaticResource Caption}" />
+                    <TextBox Text="{Binding Tags, UpdateSourceTrigger=LostFocus}" Margin="0,4,0,8" />
+                    <TextBlock Text="Category" Style="{StaticResource Caption}" />
+                    <TextBox Text="{Binding Category, UpdateSourceTrigger=LostFocus}" Margin="0,4,0,0" />
+
+                    <TextBlock Text="PLAYBACK" Style="{StaticResource Eyebrow}" Margin="0,20,0,6" />
+                    <DockPanel Margin="0,0,0,10">
+                        <ComboBox DockPanel.Dock="Right" ItemsSource="{Binding ScalingModes}" SelectedItem="{Binding Scaling}" MinWidth="120" />
+                        <TextBlock Text="Scaling" VerticalAlignment="Center" />
+                    </DockPanel>
+                    <DockPanel Margin="0,0,0,10" Visibility="{Binding HasAudio, Converter={StaticResource Visible}}">
+                        <TextBlock DockPanel.Dock="Right" Text="{Binding Volume}" Width="30" TextAlignment="Right" Style="{StaticResource Caption}" VerticalAlignment="Center" />
+                        <TextBlock Text="Volume" Width="80" VerticalAlignment="Center" />
+                        <Slider Minimum="0" Maximum="100" Value="{Binding Volume}" MinWidth="0" />
+                    </DockPanel>
+                    <DockPanel Margin="0,0,0,10" Visibility="{Binding IsVideo, Converter={StaticResource Visible}}">
+                        <TextBlock DockPanel.Dock="Right" Text="{Binding Speed, StringFormat={}{0:0.00}×}" Width="40" TextAlignment="Right" Style="{StaticResource Caption}" VerticalAlignment="Center" />
+                        <TextBlock Text="Speed" Width="80" VerticalAlignment="Center" />
+                        <Slider Minimum="0.25" Maximum="2" Value="{Binding Speed}" MinWidth="0" />
+                    </DockPanel>
+                    <DockPanel Margin="0,0,0,10">
+                        <TextBlock DockPanel.Dock="Right" Text="{Binding FpsCap, StringFormat={}{0} fps}" Width="46" TextAlignment="Right" Style="{StaticResource Caption}" VerticalAlignment="Center" />
+                        <TextBlock Text="FPS cap" Width="80" VerticalAlignment="Center" ToolTip="0 uses the global limit" />
+                        <Slider Minimum="0" Maximum="144" TickFrequency="6" IsSnapToTickEnabled="True" Value="{Binding FpsCap}" MinWidth="0" />
+                    </DockPanel>
+                    <StackPanel Visibility="{Binding IsSlideshow, Converter={StaticResource Visible}}">
+                        <DockPanel Margin="0,0,0,10">
+                            <TextBlock DockPanel.Dock="Right" Text="{Binding SlideSeconds, StringFormat={}{0:0} s}" Width="40" TextAlignment="Right" Style="{StaticResource Caption}" VerticalAlignment="Center" />
+                            <TextBlock Text="Per image" Width="80" VerticalAlignment="Center" />
+                            <Slider Minimum="3" Maximum="600" Value="{Binding SlideSeconds}" MinWidth="0" />
+                        </DockPanel>
+                        <CheckBox Style="{StaticResource Switch}" Content="Shuffle" IsChecked="{Binding SlideShuffle}" HorizontalAlignment="Right" />
+                    </StackPanel>
+
+                    <DockPanel Margin="0,20,0,6">
+                        <Button DockPanel.Dock="Right" Style="{StaticResource GhostButton}" Content="Reset" Padding="8,2" Command="{Binding ResetEffectsCommand}" />
+                        <TextBlock Text="EFFECTS" Style="{StaticResource Eyebrow}" Margin="0" VerticalAlignment="Center" />
+                    </DockPanel>
+                    <ItemsControl ItemsSource="{Binding Effects}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="0,0,0,10" ToolTip="{Binding Note}">
+                                    <DockPanel>
+                                        <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding Enabled}" />
+                                        <TextBlock Text="{Binding Label}" VerticalAlignment="Center" />
+                                    </DockPanel>
+                                    <Slider Minimum="0" Maximum="1" Value="{Binding Intensity}" Margin="0,4,0,0" MinWidth="0"
+                                            Visibility="{Binding Enabled, Converter={StaticResource Visible}}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <TextBlock Text="AUDIO REACTIVE" Style="{StaticResource Eyebrow}" Margin="0,16,0,6" />
+                    <WrapPanel>
+                        <CheckBox Content="Pulse" IsChecked="{Binding AudioPulse}" Margin="0,0,16,8" />
+                        <CheckBox Content="Glow" IsChecked="{Binding AudioGlow}" Margin="0,0,16,8" />
+                        <CheckBox Content="Particle burst" IsChecked="{Binding AudioBurst}" Margin="0,0,16,8" IsEnabled="{Binding BurstAndWavesSupported}" />
+                        <CheckBox Content="Waves" IsChecked="{Binding AudioWaves}" Margin="0,0,16,8" IsEnabled="{Binding BurstAndWavesSupported}" />
+                    </WrapPanel>
+                    <DockPanel Margin="0,4,0,0">
+                        <TextBlock Text="Sensitivity" Width="80" VerticalAlignment="Center" />
+                        <Slider Minimum="0.2" Maximum="3" Value="{Binding AudioSensitivity}" MinWidth="0" />
+                    </DockPanel>
+
+                    <StackPanel Visibility="{Binding IsWeb, Converter={StaticResource Visible}}">
+                        <TextBlock Text="PERMISSIONS" Style="{StaticResource Eyebrow}" Margin="0,20,0,6" />
+                        <CheckBox Style="{StaticResource Switch}" IsChecked="{Binding AllowNetwork}" HorizontalAlignment="Left">
+                            <TextBlock Text="Allow internet access" />
+                        </CheckBox>
+                        <TextBlock Style="{StaticResource Caption}" Margin="0,6,0,0" Text="Web wallpapers run sandboxed and offline unless you allow them online. Only allow wallpapers you trust." />
+                    </StackPanel>
+
+                    <TextBlock Text="INFO" Style="{StaticResource Eyebrow}" Margin="0,20,0,6" />
+                    <ItemsControl ItemsSource="{Binding Info}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,0,0,6">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="86" /><ColumnDefinition /></Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding Label}" Style="{StaticResource Caption}" />
+                                    <TextBlock Grid.Column="1" Text="{Binding Value}" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextBrush}" />
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <WrapPanel Margin="0,16,0,0" DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                        <Button Content="Re-analyse" Command="{Binding AnalyzeCommand}" Margin="0,0,8,8" ToolTip="Refresh tags, category and quality" />
+                        <Button Content="Show file" Command="{Binding OpenLocationCommand}" Margin="0,0,8,8" />
+                        <Button x:Name="CollectionBtn" Content="Add to collection" Margin="0,0,8,8" Click="OnCollectionMenu" />
+                        <Button Style="{StaticResource DangerButton}" Content="Remove" Command="{Binding DeleteCommand}" Margin="0,0,8,8" />
+                    </WrapPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</UserControl>

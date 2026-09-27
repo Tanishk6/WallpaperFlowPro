@@ -1,0 +1,35 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Spectrum rings</title>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#0B0F1C}canvas{display:block;width:100vw;height:100vh}</style></head>
+<body><canvas id="c"></canvas>
+<script>
+// Uses the Wallpaper Engine-compatible API, so this page also runs unchanged in Wallpaper Engine.
+const c = document.getElementById('c'), g = c.getContext('2d');
+let bands = new Array(128).fill(0), smooth = new Array(64).fill(0), color = [122, 140, 255], gain = 1;
+window.wallpaperRegisterAudioListener((a) => { bands = a; });
+window.wallpaperPropertyListener = { applyUserProperties(p) {
+  if (p.color) color = p.color.value.split(' ').map((v) => Math.round(parseFloat(v) * 255));
+  if (p.gain) gain = p.gain.value;
+} };
+const resize = () => { c.width = innerWidth * devicePixelRatio; c.height = innerHeight * devicePixelRatio; };
+addEventListener('resize', resize); resize();
+function frame(t) {
+  requestAnimationFrame(frame);
+  const w = c.width, h = c.height, cx = w / 2, cy = h / 2, base = Math.min(w, h) * 0.18;
+  g.fillStyle = 'rgba(11,15,28,0.35)'; g.fillRect(0, 0, w, h);
+  for (let i = 0; i < 64; i++) smooth[i] += (((bands[i] + bands[64 + i]) / 2) * gain - smooth[i]) * 0.35;
+  const bass = (smooth[0] + smooth[1] + smooth[2] + smooth[3]) / 4;
+  for (let ring = 0; ring < 3; ring++) {
+    g.beginPath();
+    for (let i = 0; i <= 64; i++) {
+      const k = i % 64, a = (k / 64) * Math.PI * 2 + t / 6000 * (ring + 1);
+      const r = base * (1 + ring * 0.45) + smooth[k] * base * (0.9 - ring * 0.2) + bass * 20;
+      const x = cx + Math.cos(a) * r, y = cy + Math.sin(a) * r;
+      i ? g.lineTo(x, y) : g.moveTo(x, y);
+    }
+    g.strokeStyle = `rgba(${color[0]},${color[1]},${color[2]},${0.9 - ring * 0.25})`;
+    g.lineWidth = (3 - ring) * devicePixelRatio; g.stroke();
+  }
+}
+requestAnimationFrame(frame);
+</script></body></html>

@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>WallpaperFlow.Core</RootNamespace>
+    <AssemblyName>WallpaperFlow.Core</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.10" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2792.45" />
+    <PackageReference Include="NAudio.Wasapi" Version="2.2.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="WallpaperFlow.Core.Tests" />
+    <InternalsVisibleTo Include="WallpaperFlowPro" />
+  </ItemGroup>
+</Project>

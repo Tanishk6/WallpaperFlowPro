@@ -1,0 +1,43 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Light palette. Accent/Highlight/WindowTint are overridden per theme by ThemeManager. -->
+    <SolidColorBrush x:Key="WindowSolidBrush" Color="#EEF1F7" />
+    <SolidColorBrush x:Key="WindowTintBrush" Color="#E6EEF1F7" />
+    <SolidColorBrush x:Key="SidebarBrush" Color="#8CFFFFFF" />
+    <SolidColorBrush x:Key="SurfaceBrush" Color="#D9FFFFFF" />
+    <SolidColorBrush x:Key="SurfaceSolidBrush" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="SurfaceAltBrush" Color="#F5F7FB" />
+    <SolidColorBrush x:Key="SurfaceHoverBrush" Color="#E8ECF5" />
+    <SolidColorBrush x:Key="SurfacePressedBrush" Color="#DDE2EE" />
+    <SolidColorBrush x:Key="StrokeBrush" Color="#D9DEEA" />
+    <SolidColorBrush x:Key="StrokeStrongBrush" Color="#C3CADB" />
+    <SolidColorBrush x:Key="TextBrush" Color="#141827" />
+    <SolidColorBrush x:Key="TextMutedBrush" Color="#5A6380" />
+    <SolidColorBrush x:Key="TextFaintBrush" Color="#8A92AA" />
+    <SolidColorBrush x:Key="AccentBrush" Color="#4254D6" />
+    <SolidColorBrush x:Key="AccentSoftBrush" Color="#264254D6" />
+    <SolidColorBrush x:Key="AccentOnBrush" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="HighlightBrush" Color="#C8641E" />
+    <SolidColorBrush x:Key="HighlightSoftBrush" Color="#26C8641E" />
+    <SolidColorBrush x:Key="DangerBrush" Color="#C4352B" />
+    <SolidColorBrush x:Key="DangerSoftBrush" Color="#1FC4352B" />
+    <SolidColorBrush x:Key="SuccessBrush" Color="#1F8A55" />
+    <SolidColorBrush x:Key="InputBrush" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="ScrimBrush" Color="#990E1220" />
+    <SolidColorBrush x:Key="ThumbFallbackBrush" Color="#E3E7F0" />
+    <Color x:Key="ShadowColor">#5A6380</Color>
+    <Color x:Key="AccentColor">#4254D6</Color>
+    <LinearGradientBrush x:Key="AccentGradientBrush" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Color="#4254D6" Offset="0" />
+        <GradientStop Color="#D6428F" Offset="1" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="CardStrokeBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#FFFFFFFF" Offset="0" />
+        <GradientStop Color="#1F5A6380" Offset="1" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="HeroFadeBrush" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Color="#F5FFFFFF" Offset="0" />
+        <GradientStop Color="#B3FFFFFF" Offset="0.55" />
+        <GradientStop Color="#40FFFFFF" Offset="1" />
+    </LinearGradientBrush>
+</ResourceDictionary>

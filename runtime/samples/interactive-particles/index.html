@@ -1,0 +1,34 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Drift field</title>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#0E1220}canvas{display:block;width:100vw;height:100vh}</style></head>
+<body><canvas id="c"></canvas>
+<script>
+// Particles flow around the pointer; click to send a ripple. Pointer events arrive through the WallpaperFlow runtime.
+const c = document.getElementById('c'), g = c.getContext('2d');
+let W, H, dpr, pts = [], mouse = { x: -1e4, y: -1e4 }, ripples = [], count = 900;
+const resize = () => { dpr = devicePixelRatio; W = c.width = innerWidth * dpr; H = c.height = innerHeight * dpr; seed(); };
+const seed = () => { pts = Array.from({ length: count }, () => ({ x: Math.random() * W, y: Math.random() * H, vx: 0, vy: 0, h: Math.random() })); };
+window.wallpaperPropertyListener = { applyUserProperties(p) { if (p.count) { count = p.count.value | 0; seed(); } } };
+addEventListener('resize', resize); resize();
+addEventListener('mousemove', (e) => { mouse.x = e.clientX * dpr; mouse.y = e.clientY * dpr; });
+addEventListener('mouseout', () => { mouse.x = mouse.y = -1e4; });
+addEventListener('click', (e) => ripples.push({ x: e.clientX * dpr, y: e.clientY * dpr, r: 0 }));
+function frame(t) {
+  requestAnimationFrame(frame);
+  g.fillStyle = 'rgba(14,18,32,0.22)'; g.fillRect(0, 0, W, H);
+  const time = t / 1000;
+  for (const r of ripples) r.r += 14 * dpr;
+  ripples = ripples.filter((r) => r.r < Math.max(W, H));
+  for (const p of pts) {
+    const a = Math.sin(p.x * 0.0016 + time * 0.2) + Math.cos(p.y * 0.0021 - time * 0.15);
+    p.vx += Math.cos(a * 2) * 0.05; p.vy += Math.sin(a * 2) * 0.05;
+    const dx = p.x - mouse.x, dy = p.y - mouse.y, d2 = dx * dx + dy * dy, R = 160 * dpr;
+    if (d2 < R * R) { const f = (1 - Math.sqrt(d2) / R) * 1.4; p.vx += dx / Math.sqrt(d2 + 1) * f; p.vy += dy / Math.sqrt(d2 + 1) * f; }
+    for (const r of ripples) { const rx = p.x - r.x, ry = p.y - r.y, dist = Math.hypot(rx, ry); if (Math.abs(dist - r.r) < 30 * dpr) { p.vx += rx / dist * 2; p.vy += ry / dist * 2; } }
+    p.vx *= 0.94; p.vy *= 0.94; p.x = (p.x + p.vx + W) % W; p.y = (p.y + p.vy + H) % H;
+    g.fillStyle = p.h > 0.85 ? '#FFB86B' : `hsla(${228 + p.h * 20},90%,${70 + p.h * 10}%,0.8)`;
+    g.fillRect(p.x, p.y, 1.6 * dpr, 1.6 * dpr);
+  }
+}
+requestAnimationFrame(frame);
+</script></body></html>

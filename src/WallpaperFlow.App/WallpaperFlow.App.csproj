@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>WallpaperFlowPro</AssemblyName>
+    <RootNamespace>WallpaperFlow.App</RootNamespace>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\app.ico</ApplicationIcon>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <TieredPGO>true</TieredPGO>
+    <InvariantGlobalization>false</InvariantGlobalization>
+    <AllowedReferenceRelatedFileExtensions>none</AllowedReferenceRelatedFileExtensions>
+    <Product>WallpaperFlow Pro</Product>
+    <Company>Tnsk.exe</Company>
+    <Copyright>© 2026 Tnsk.exe</Copyright>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WallpaperFlow.Core\WallpaperFlow.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\app.ico" />
+    <Resource Include="Assets\tnsk-logo.png" />
+    <None Update="Assets\app.ico" CopyToOutputDirectory="PreserveNewest" />
+    <!-- Web runtime, templates, mpv shaders and samples ship next to the exe. -->
+    <None Include="..\..\runtime\**\*" LinkBase="runtime" CopyToOutputDirectory="PreserveNewest" />
+    <!-- mpv / ffmpeg (fetched by build\fetch-deps.ps1). -->
+    <None Include="..\..\tools\**\*" LinkBase="tools" CopyToOutputDirectory="PreserveNewest" Condition="Exists('..\..\tools')" />
+    <None Include="..\..\THIRD-PARTY-NOTICES.md" Link="THIRD-PARTY-NOTICES.md" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

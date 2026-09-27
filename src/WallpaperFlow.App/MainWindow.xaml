@@ -1,0 +1,136 @@
+<Window x:Class="WallpaperFlow.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:WallpaperFlow.App.ViewModels"
+        xmlns:v="clr-namespace:WallpaperFlow.App.Views"
+        xmlns:h="clr-namespace:WallpaperFlow.App.Helpers"
+        Title="WallpaperFlow Pro" Width="1320" Height="840" MinWidth="1000" MinHeight="640"
+        WindowStartupLocation="CenterScreen" FontFamily="{StaticResource UiFont}" FontSize="13"
+        Foreground="{DynamicResource TextBrush}" Background="{DynamicResource WindowSolidBrush}"
+        UseLayoutRounding="True" TextOptions.TextFormattingMode="Display">
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="44" ResizeBorderThickness="6" GlassFrameThickness="-1" CornerRadius="0" UseAeroCaptionButtons="False" />
+    </WindowChrome.WindowChrome>
+
+    <Window.InputBindings>
+        <KeyBinding Key="Space" Modifiers="Ctrl" Command="{Binding TogglePauseCommand}" />
+        <KeyBinding Key="M" Modifiers="Ctrl" Command="{Binding ToggleMuteCommand}" />
+        <KeyBinding Key="Right" Modifiers="Ctrl" Command="{Binding NextCommand}" />
+    </Window.InputBindings>
+
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type vm:HomeViewModel}"><v:HomeView /></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:LibraryViewModel}"><v:LibraryView /></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:UploadViewModel}"><v:UploadView /></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:DisplaysViewModel}"><v:DisplaysView /></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:PerformanceViewModel}"><v:PerformanceView /></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ThemesViewModel}"><v:ThemesView /></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:SettingsViewModel}"><v:SettingsView /></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:AboutViewModel}"><v:AboutView /></DataTemplate>
+
+        <DataTemplate x:Key="NavTemplate">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding Glyph}" Style="{StaticResource Icon}" FontSize="16" Width="22" />
+                <TextBlock Text="{Binding Title}" Margin="12,0,0,0" FontSize="13.5" VerticalAlignment="Center" />
+            </StackPanel>
+        </DataTemplate>
+    </Window.Resources>
+
+    <Grid x:Name="Root">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="236" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Animated app background (Settings → Appearance → App background) -->
+        <h:AnimatedBackdrop x:Name="Backdrop" Grid.ColumnSpan="2" />
+
+        <!-- Sidebar -->
+        <Grid Background="{DynamicResource SidebarBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="44" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal" Margin="18,0,0,0" VerticalAlignment="Center">
+                <Image Source="/Assets/app.ico" Width="18" Height="18" />
+                <TextBlock Text="WallpaperFlow" Margin="10,0,0,0" FontWeight="SemiBold" FontSize="13" VerticalAlignment="Center" />
+                <TextBlock Text="PRO" Margin="6,0,0,0" FontSize="11" Foreground="{DynamicResource AccentGradientBrush}" FontWeight="Bold" VerticalAlignment="Center" />
+            </StackPanel>
+
+            <Grid Grid.Row="1" Margin="12,6,12,10">
+                <TextBox x:Name="Search" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" Padding="34,7,10,7" ToolTip="Search your library (Ctrl+F)" />
+                <TextBlock Text="&#xE721;" Style="{StaticResource Icon}" FontSize="13" Margin="12,0,0,0" HorizontalAlignment="Left" Foreground="{DynamicResource TextFaintBrush}" IsHitTestVisible="False" />
+                <TextBlock Text="Search" Margin="35,0,0,0" VerticalAlignment="Center" Foreground="{DynamicResource TextFaintBrush}" IsHitTestVisible="False"
+                           Visibility="{Binding SearchText, Converter={StaticResource Collapsed}}" />
+            </Grid>
+
+            <ListBox Grid.Row="2" ItemsSource="{Binding Navigation}" SelectedItem="{Binding SelectedNav}" ItemTemplate="{StaticResource NavTemplate}"
+                     ItemContainerStyle="{StaticResource NavItem}" Background="Transparent" BorderThickness="0" Foreground="{DynamicResource TextBrush}"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
+
+            <!-- Now playing -->
+            <Border Grid.Row="3" Margin="12,0,12,8" CornerRadius="10" Padding="12,10" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource StrokeBrush}" BorderThickness="1">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Ellipse x:Name="LiveDot" Width="7" Height="7" Fill="{DynamicResource TextFaintBrush}" VerticalAlignment="Center" />
+                        <TextBlock Text="{Binding StatusText}" Margin="8,0,0,0" Style="{StaticResource Caption}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" MaxWidth="170" />
+                    </StackPanel>
+                    <TextBlock Text="{Binding NowPlaying, TargetNullValue='Nothing playing'}" Margin="0,4,0,8" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                    <StackPanel Orientation="Horizontal">
+                        <Button x:Name="PauseBtn" Style="{StaticResource IconButton}" Content="&#xE769;" Command="{Binding TogglePauseCommand}" ToolTip="Pause or resume (Ctrl+Space)" />
+                        <Button x:Name="MuteBtn" Style="{StaticResource IconButton}" Content="&#xE767;" Command="{Binding ToggleMuteCommand}" ToolTip="Mute (Ctrl+M)" />
+                        <Button Style="{StaticResource IconButton}" Content="&#xE893;" Command="{Binding NextCommand}" ToolTip="Next wallpaper (Ctrl+→)" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <ListBox Grid.Row="4" ItemsSource="{Binding FooterNavigation}" SelectedItem="{Binding SelectedNav}" ItemTemplate="{StaticResource NavTemplate}"
+                     ItemContainerStyle="{StaticResource NavItem}" Background="Transparent" BorderThickness="0" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4" />
+
+            <!-- Creator badge -->
+            <Button Grid.Row="5" Style="{StaticResource GhostButton}" Margin="10,0,10,12" Padding="8,6" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
+                    Click="Creator_Click" ToolTip="Tnsk.exe on GitHub">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/Assets/tnsk-logo.png" Width="30" Height="30" RenderOptions.BitmapScalingMode="HighQuality" />
+                    <StackPanel Margin="10,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="Made by" FontSize="10.5" Foreground="{DynamicResource TextFaintBrush}" />
+                        <TextBlock Text="Tnsk.exe" FontSize="13" FontWeight="Bold" Foreground="{DynamicResource AccentGradientBrush}" />
+                    </StackPanel>
+                </StackPanel>
+            </Button>
+        </Grid>
+
+        <!-- Content -->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="44" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
+                <Button Style="{StaticResource CaptionButton}" Content="&#xE921;" Click="Minimize_Click" ToolTip="Minimize" />
+                <Button x:Name="MaxBtn" Style="{StaticResource CaptionButton}" Content="&#xE922;" Click="Maximize_Click" ToolTip="Maximize" />
+                <Button Style="{StaticResource CloseCaptionButton}" Content="&#xE8BB;" Click="Close_Click" ToolTip="Close to tray" />
+            </StackPanel>
+
+            <Border Grid.Row="1" Margin="32,0,32,12" CornerRadius="10" Padding="14,10" Background="{DynamicResource HighlightSoftBrush}"
+                    Visibility="{Binding IsSafeMode, Converter={StaticResource Visible}}">
+                <DockPanel>
+                    <Button DockPanel.Dock="Right" Content="Restore wallpapers" Command="{Binding ExitSafeModeCommand}" />
+                    <TextBlock Style="{StaticResource Body}" VerticalAlignment="Center"
+                               Text="Safe mode: WallpaperFlow closed unexpectedly twice, so wallpapers weren't restored. Pick one, or restore them when you're ready." />
+                </DockPanel>
+            </Border>
+
+            <ContentControl x:Name="PageHost" Grid.Row="2" Content="{Binding CurrentPage}" Focusable="False">
+                <ContentControl.RenderTransform>
+                    <TranslateTransform x:Name="PageShift" />
+                </ContentControl.RenderTransform>
+            </ContentControl>
+        </Grid>
+    </Grid>
+</Window>

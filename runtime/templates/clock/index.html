@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clock</title>
+<style>
+  :root { --accent: #7A8CFF; --ink: #E9ECF5; --dim: rgba(233,236,245,.55); --bg1: #0B0F1C; --bg2: #161B2E; }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: radial-gradient(120% 90% at 30% 20%, var(--bg2), var(--bg1)); color: var(--ink);
+    font-family: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  .stage { position: absolute; inset: 0; display: grid; place-items: center; }
+  .face { display: none; text-align: center; }
+  body[data-style="minimal"] .minimal, body[data-style="digital"] .digital, body[data-style="analog"] .analog, body[data-style="word"] .word { display: block; }
+  .minimal .time { font-weight: 200; font-size: 17vmin; letter-spacing: -.02em; line-height: 1; font-variant-numeric: tabular-nums; }
+  .minimal .sec { color: var(--accent); font-size: .38em; margin-left: .15em; vertical-align: .9em; font-weight: 300; }
+  .date { margin-top: 2.4vmin; font-size: 2.6vmin; letter-spacing: .32em; text-transform: uppercase; color: var(--dim); }
+  .digital .time { font-family: "Cascadia Mono", Consolas, monospace; font-size: 15vmin; color: var(--accent);
+    text-shadow: 0 0 1.2vmin color-mix(in srgb, var(--accent) 70%, transparent), 0 0 5vmin color-mix(in srgb, var(--accent) 35%, transparent); font-variant-numeric: tabular-nums; }
+  .analog canvas { width: 62vmin; height: 62vmin; }
+  .word .text { font-size: 7vmin; font-weight: 300; line-height: 1.25; max-width: 70vw; }
+  .word .text b { font-weight: 600; color: var(--accent); }
+</style>
+</head>
+<body data-style="minimal">
+<div class="stage">
+  <div class="face minimal"><div class="time"><span id="m-hm">--:--</span><span class="sec" id="m-s"></span></div><div class="date" id="m-date"></div></div>
+  <div class="face digital"><div class="time" id="d-time">--:--:--</div><div class="date" id="d-date"></div></div>
+  <div class="face analog"><canvas id="a-canvas" width="800" height="800"></canvas><div class="date" id="a-date"></div></div>
+  <div class="face word"><div class="text" id="w-text"></div><div class="date" id="w-date"></div></div>
+</div>
+<script src="clock.js"></script>
+</body>
+</html>
